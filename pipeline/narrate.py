@@ -116,10 +116,12 @@ def generate_report_narrative(client, incident, levers, conn):
     levers_text = "\n".join([f"- {l}" for l in candidate_levers])
     
     prompt = f"""
-You are a senior BI analyst writing an executive report for a metric anomaly dashboard.
+You are an expert BI narrative generation agent. You need to write two persona-specific incident reports based on the same anomaly data:
+1. CFO / Finance Persona: framed around financial impact, board-ready summaries, margins, and dollar impact language.
+2. Regional Ops Manager Persona: framed around immediate operational root causes, engineering checklists, and regional SRE action details.
 
-Incident Details:
-- Business Metric: {kpi} (Revenue drop)
+Anomaly Details:
+- Metric: {kpi} (Revenue drop)
 - Region: {region}
 - Date: {timestamp}
 - Actual Value: ${actual:,.2f}
@@ -128,7 +130,7 @@ Incident Details:
 - Percent Drop: -{pct_change * 100:.1f}%
 
 Driver & Evidence:
-- Driver: '{driver_kpi}' (Correlation: {corr:.2f}, Lag: {lag} days)
+- Correlated Driver: '{driver_kpi}' (r = {corr:.2f}, Lag: {lag} days)
 - Customer support ticket logs:
 ---
 {tickets_text}
@@ -138,23 +140,37 @@ Permissible Business & SRE Action Levers:
 {levers_text}
 
 Confidence Calibrations:
-- Confidence Track: {incident['confidence_track']}
+- Track: {incident['confidence_track']}
 - Phrased Caveat: {incident['confidence_caveat']}
 
-Generate a structured incident report. Choose the most relevant action levers from the list, adapt them to the incident details, and respond in STRICT JSON format with these exact keys:
+Respond in STRICT JSON format with these exact keys:
 {{
   "incident_id": "{insight_id}",
-  "title": "A short, professional headline (e.g. 'Southeast Region Payment Gateway Outage')",
   "severity": "Critical" | "High" | "Medium" | "Low" (Critical for drop >= 50%, High for drop >= 15%, Medium/Low otherwise),
-  "executive_summary": "A concise (2-3 sentences) executive overview explaining what happened, the confirmed cause, and the confidence level.",
-  "business_impact": "Quantified financial and operational impact summary.",
-  "root_cause_analysis": "A detailed explanation of how the candidate driver is responsible for the revenue drop, referencing specific customer support tickets.",
-  "evidence_summary": "Summary of the support tickets or other evidence. Quote or reference specific ticket numbers.",
-  "recommendations": [
-    "Refined actionable recommendation 1",
-    "Refined actionable recommendation 2",
-    "Refined actionable recommendation 3"
-  ]
+  
+  "cfo": {{
+    "title": "Short, board-friendly financial headline",
+    "executive_summary": "A 2-3 sentence overview for the CFO focusing on revenue and margin impact.",
+    "business_impact": "Financial loss metrics and risk assessment.",
+    "root_cause_analysis": "Explanation of how the driver impacted financial metrics.",
+    "recommendations": [
+      "Financial mitigation lever 1",
+      "Financial mitigation lever 2",
+      "Financial mitigation lever 3"
+    ]
+  }},
+  
+  "ops": {{
+    "title": "Operational technical headline",
+    "executive_summary": "A 2-3 sentence overview for the Ops Manager focusing on SRE metrics and customer tickets.",
+    "business_impact": "Operational metrics (ticket count, latency, duration).",
+    "root_cause_analysis": "Detailed technical explanation of the failure mode referencing tickets.",
+    "recommendations": [
+      "SRE operational lever 1",
+      "SRE operational lever 2",
+      "SRE operational lever 3"
+    ]
+  }}
 }}
 Do NOT include markdown formatting (like ```json). Return ONLY the raw JSON.
 """
@@ -177,7 +193,7 @@ Do NOT include markdown formatting (like ```json). Return ONLY the raw JSON.
             text = text.rsplit("```", 1)[0]
         text = text.strip()
         
-        report = json.loads(text)
+        raw_report = json.loads(text)
         
         # Merge telemetry logs
         prompt_tokens = 0
@@ -188,29 +204,58 @@ Do NOT include markdown formatting (like ```json). Return ONLY the raw JSON.
             
         log_llm_call(insight_id, "act_narration", model_name, prompt_tokens, candidates_tokens, latency)
         
-        # Attach raw objects for frontend
-        report["retrieved_tickets"] = evidence_details
-        report["anomaly"] = anomaly
-        report["drivers"] = incident["drivers"]
-        report["confidence_track"] = incident["confidence_track"]
-        report["confidence_score"] = incident["confidence_score"]
-        report["confidence_caveat"] = incident["confidence_caveat"]
-        report["abstain"] = False
-        report["clarifying_question"] = ""
+        # Format unified report with backward-compatible top-level keys defaulting to ops
+        report = {
+            "incident_id": insight_id,
+            "title": raw_report["ops"]["title"],
+            "severity": raw_report.get("severity", "High"),
+            "executive_summary": raw_report["ops"]["executive_summary"],
+            "business_impact": raw_report["ops"]["business_impact"],
+            "root_cause_analysis": raw_report["ops"]["root_cause_analysis"],
+            "evidence_summary": f"Retrieved ticket logs match '{driver_kpi}' correlation.",
+            "recommendations": raw_report["ops"]["recommendations"],
+            "cfo": raw_report["cfo"],
+            "ops": raw_report["ops"],
+            "retrieved_tickets": evidence_details,
+            "anomaly": anomaly,
+            "drivers": incident["drivers"],
+            "confidence_track": incident["confidence_track"],
+            "confidence_score": incident["confidence_score"],
+            "confidence_caveat": incident["confidence_caveat"],
+            "abstain": False,
+            "clarifying_question": ""
+        }
         
         return report
         
     except Exception as e:
         print(f"Failed to generate narrative report for {region}: {e}")
+        fallback_title = f"Revenue drop in {region}"
+        fallback_summary = f"A revenue anomaly was detected in {region} on {timestamp} due to {driver_kpi}."
+        fallback_recommendations = candidate_levers[:3]
         return {
             "incident_id": insight_id,
-            "title": f"Revenue drop in {region}",
+            "title": fallback_title,
             "severity": "High",
-            "executive_summary": f"A revenue anomaly was detected in {region} on {timestamp}.",
+            "executive_summary": fallback_summary,
             "business_impact": f"Revenue dropped by -${abs_change:,.2f} (-{pct_change * 100:.1f}%).",
             "root_cause_analysis": f"Root cause driver: {driver_kpi}. Narrative synthesis failed: {e}",
             "evidence_summary": "Failed to analyze support tickets.",
-            "recommendations": candidate_levers[:3],
+            "recommendations": fallback_recommendations,
+            "cfo": {
+                "title": fallback_title,
+                "executive_summary": fallback_summary,
+                "business_impact": f"Revenue drop of -${abs_change:,.2f} (-{pct_change * 100:.1f}%).",
+                "root_cause_analysis": f"Root cause driver: {driver_kpi}",
+                "recommendations": fallback_recommendations
+            },
+            "ops": {
+                "title": fallback_title,
+                "executive_summary": fallback_summary,
+                "business_impact": f"Revenue drop of -${abs_change:,.2f} (-{pct_change * 100:.1f}%).",
+                "root_cause_analysis": f"Root cause driver: {driver_kpi}",
+                "recommendations": fallback_recommendations
+            },
             "retrieved_tickets": evidence_details,
             "anomaly": anomaly,
             "drivers": incident["drivers"],

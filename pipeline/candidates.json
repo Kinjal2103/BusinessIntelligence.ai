@@ -22,6 +22,15 @@
         "triage_reason": "No support ticket evidence found in the anomaly window.",
         "triage_confidence": 0.0,
         "contribution_pct": 0.0,
+        "price_volume_mix": {
+          "volume_contribution_pct": 0.0,
+          "price_residual_pct": 100.0,
+          "details": "N/A"
+        },
+        "causal_inference_did": {
+          "causal_impact_dollars": 0.0,
+          "control_region": "N/A"
+        },
         "evidence_tickets": []
       },
       {
@@ -33,10 +42,19 @@
         "triage_reason": "No correlation found.",
         "triage_confidence": 0.0,
         "contribution_pct": 0.0,
+        "price_volume_mix": {
+          "volume_contribution_pct": 0.0,
+          "price_residual_pct": 100.0,
+          "details": "N/A"
+        },
+        "causal_inference_did": {
+          "causal_impact_dollars": 0.0,
+          "control_region": "N/A"
+        },
         "evidence_tickets": []
       }
     ],
-    "timestamp": "2026-08-26 19:28:47"
+    "timestamp": "2026-08-29 00:22:15"
   },
   {
     "anomaly": {
@@ -61,6 +79,15 @@
         "triage_reason": "No correlation found.",
         "triage_confidence": 0.0,
         "contribution_pct": 0.0,
+        "price_volume_mix": {
+          "volume_contribution_pct": 0.0,
+          "price_residual_pct": 100.0,
+          "details": "N/A"
+        },
+        "causal_inference_did": {
+          "causal_impact_dollars": 0.0,
+          "control_region": "N/A"
+        },
         "evidence_tickets": []
       },
       {
@@ -69,19 +96,32 @@
         "lag": 0,
         "is_correlated": true,
         "evidence_gate_passed": true,
-        "triage_reason": "The customer support tickets consistently report 'payment gateway timeout at checkout. Transaction failed.', directly explaining a revenue drop due to uncompleted transactions.",
-        "triage_confidence": 1.0,
-        "contribution_pct": 0.63,
+        "triage_reason": "The support tickets directly report multiple instances of payment gateway timeouts and failed transactions at checkout on 2026-08-15, providing direct evidence for a revenue drop due to uncompleted purchases.",
+        "triage_confidence": 0.98,
+        "contribution_pct": 0.95,
+        "price_volume_mix": {
+          "volume_contribution_pct": 95.0,
+          "price_residual_pct": 5.0,
+          "details": "Volume shift: 1.82 (16.00 -> 17.82)"
+        },
+        "causal_inference_did": {
+          "causal_impact_dollars": -3788.34,
+          "control_region": "Europe",
+          "treatment_pre_avg": 50086.74,
+          "treatment_post_avg": 46468.07,
+          "control_pre_avg": 15011.29,
+          "control_post_avg": 15180.97
+        },
         "evidence_tickets": [
+          "TKT-4237",
           "TKT-4239",
           "TKT-4241",
           "TKT-4243",
-          "TKT-4245",
-          "TKT-4237"
+          "TKT-4265"
         ]
       }
     ],
-    "timestamp": "2026-08-26 19:29:18"
+    "timestamp": "2026-08-29 00:22:24"
   },
   {
     "anomaly": {
@@ -106,6 +146,15 @@
         "triage_reason": "No correlation found.",
         "triage_confidence": 0.0,
         "contribution_pct": 0.0,
+        "price_volume_mix": {
+          "volume_contribution_pct": 0.0,
+          "price_residual_pct": 100.0,
+          "details": "N/A"
+        },
+        "causal_inference_did": {
+          "causal_impact_dollars": 0.0,
+          "control_region": "N/A"
+        },
         "evidence_tickets": []
       },
       {
@@ -117,9 +166,18 @@
         "triage_reason": "No support ticket evidence found in the anomaly window.",
         "triage_confidence": 0.0,
         "contribution_pct": 0.0,
+        "price_volume_mix": {
+          "volume_contribution_pct": 0.0,
+          "price_residual_pct": 100.0,
+          "details": "N/A"
+        },
+        "causal_inference_did": {
+          "causal_impact_dollars": 0.0,
+          "control_region": "N/A"
+        },
         "evidence_tickets": []
       }
     ],
-    "timestamp": "2026-08-26 19:29:25"
+    "timestamp": "2026-08-29 00:22:26"
   }
 ]

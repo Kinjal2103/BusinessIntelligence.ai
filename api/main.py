@@ -1,6 +1,7 @@
 import os
 import json
 import subprocess
+import sys
 import psycopg2
 from fastapi import FastAPI, HTTPException, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
@@ -58,30 +59,43 @@ def get_reports(
         
         for r in reports:
             region = r["anomaly"]["region"]
+            report_copy = dict(r)
             
-            # 1. Ops Manager: Row-level Regional Isolation
+            # Enforce Row-Level Regional Isolation for Ops Manager
             if x_user_role == "Regional_Ops_Manager":
                 if region != x_user_region:
-                    # Skip reports outside Ops Manager's entitled region
                     continue
-                # Ops Manager can see descriptions, keep full report
-                filtered_reports.append(r)
+                # Load Ops persona-specific narrative properties if available
+                if "ops" in report_copy:
+                    ops_data = report_copy["ops"]
+                    report_copy["title"] = ops_data.get("title", report_copy["title"])
+                    report_copy["executive_summary"] = ops_data.get("executive_summary", report_copy["executive_summary"])
+                    report_copy["business_impact"] = ops_data.get("business_impact", report_copy["business_impact"])
+                    report_copy["root_cause_analysis"] = ops_data.get("root_cause_analysis", report_copy["root_cause_analysis"])
+                    report_copy["recommendations"] = ops_data.get("recommendations", report_copy["recommendations"])
+                filtered_reports.append(report_copy)
                 
-            # 2. CFO: PII Redaction
+            # Enforce Column-Level PII Redaction and CFO summaries for CFO
             elif x_user_role == "CFO":
-                # CFO sees all regions, but columns/tickets are redacted for PII
-                report_copy = dict(r)
+                # Load CFO persona-specific narrative properties if available
+                if "cfo" in report_copy:
+                    cfo_data = report_copy["cfo"]
+                    report_copy["title"] = cfo_data.get("title", report_copy["title"])
+                    report_copy["executive_summary"] = cfo_data.get("executive_summary", report_copy["executive_summary"])
+                    report_copy["business_impact"] = cfo_data.get("business_impact", report_copy["business_impact"])
+                    report_copy["root_cause_analysis"] = cfo_data.get("root_cause_analysis", report_copy["root_cause_analysis"])
+                    report_copy["recommendations"] = cfo_data.get("recommendations", report_copy["recommendations"])
+                
                 if "retrieved_tickets" in report_copy:
                     redacted_tickets = []
                     for t in report_copy["retrieved_tickets"]:
                         t_copy = dict(t)
-                        # Redact PII description column
                         t_copy["description"] = "[REDACTED - PII EXCLUSION FOR CFO ROLE]"
                         redacted_tickets.append(t_copy)
                     report_copy["retrieved_tickets"] = redacted_tickets
                 filtered_reports.append(report_copy)
             else:
-                # Default (no role / admin): return full report
+                # Admin / Default sees combined
                 filtered_reports.append(r)
                 
         return filtered_reports
@@ -224,19 +238,30 @@ def get_telemetry_logs():
 def run_analytical_pipeline():
     """Trigger the entire pipeline sequentially: Detect -> Investigate -> Judge -> Act."""
     print("Triggering full pipeline execution (Detect -> Investigate -> Judge -> Act)...")
+    env = dict(os.environ)
+    env["PYTHONPATH"] = "."
+    
+    # Dynamically resolve virtual environment python executable
+    root_dir = os.path.dirname(os.path.dirname(__file__))
+    python_exe = os.path.join(root_dir, "venv", "Scripts", "python.exe")
+    if not os.path.exists(python_exe):
+        python_exe = os.path.join(root_dir, "venv", "bin", "python") # Unix fallback
+    if not os.path.exists(python_exe):
+        python_exe = sys.executable # Final fallback
+        
     try:
         # 1. Run detection
-        print("Running detect.py...")
-        subprocess.run(["python", "-m", "pipeline.detect"], check=True)
+        print(f"Running detect.py with {python_exe}...")
+        subprocess.run([python_exe, "-m", "pipeline.detect"], env=env, check=True)
         # 2. Run investigation
         print("Running investigate.py...")
-        subprocess.run(["python", "-m", "pipeline.investigate"], check=True)
+        subprocess.run([python_exe, "-m", "pipeline.investigate"], env=env, check=True)
         # 3. Run scoring/judging
         print("Running judge.py...")
-        subprocess.run(["python", "-m", "pipeline.judge"], check=True)
+        subprocess.run([python_exe, "-m", "pipeline.judge"], env=env, check=True)
         # 4. Run narration (Act)
         print("Running narrate.py...")
-        subprocess.run(["python", "-m", "pipeline.narrate"], check=True)
+        subprocess.run([python_exe, "-m", "pipeline.narrate"], env=env, check=True)
         
         return {"status": "success", "message": "Pipeline completed successfully. All logs & reports updated."}
     except subprocess.CalledProcessError as e:

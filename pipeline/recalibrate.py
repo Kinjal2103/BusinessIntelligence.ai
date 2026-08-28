@@ -39,20 +39,26 @@ def run_recalibration():
         with open(reports_path, "r") as f:
             reports = json.load(f)
             
-        # Map incident_id -> kpi_name
+        # Map incident_id -> kpi_name and confidence_track
         incident_kpis = {}
+        incident_tracks = {}
         for r in reports:
             incident_kpis[r["incident_id"]] = r["anomaly"]["kpi"]
+            incident_tracks[r["incident_id"]] = r.get("confidence_track", "Unconfirmed")
             
-        # Count rejections per KPI
+        # Count rejections per KPI and per Track
         rejection_counts = {}
+        track_rejections = {"Acute": 0, "Structural": 0}
         for rej in rejections:
             inc_id = rej[0]
             kpi = incident_kpis.get(inc_id)
             if kpi:
                 rejection_counts[kpi] = rejection_counts.get(kpi, 0) + 1
+            track = incident_tracks.get(inc_id)
+            if track in track_rejections:
+                track_rejections[track] += 1
                 
-        # 3. Apply thresholds recalibration per KPI
+        # 3. Apply thresholds recalibration per KPI (Detect)
         for kpi, count in rejection_counts.items():
             contract = registry.get(kpi)
             if not contract:
@@ -82,6 +88,25 @@ def run_recalibration():
                     updated_at = CURRENT_TIMESTAMP;
             """
             cursor.execute(sql, (kpi, new_pct, new_abs))
+            
+        # 4. Apply confidence weight overrides recalibration (Judge)
+        acute_weight = max(0.50, 0.90 - (0.05 * track_rejections["Acute"]))
+        structural_weight = max(0.50, 0.70 - (0.05 * track_rejections["Structural"]))
+        
+        print(f"Recalibrating confidence track weights based on track rejections:")
+        print(f"  - Acute Track Weight: 0.90 -> {acute_weight:.2f}")
+        print(f"  - Structural Track Weight: 0.70 -> {structural_weight:.2f}")
+        
+        sql_weights = """
+            INSERT INTO config_overrides (kpi_name, pct_change_override, absolute_change_override)
+            VALUES ('confidence_weights', %s, %s)
+            ON CONFLICT (kpi_name)
+            DO UPDATE SET 
+                pct_change_override = EXCLUDED.pct_change_override,
+                absolute_change_override = EXCLUDED.absolute_change_override,
+                updated_at = CURRENT_TIMESTAMP;
+        """
+        cursor.execute(sql_weights, (acute_weight, structural_weight))
             
         conn.commit()
         cursor.close()

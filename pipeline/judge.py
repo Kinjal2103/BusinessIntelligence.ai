@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import psycopg2
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from google import genai
@@ -12,6 +13,7 @@ dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
 load_dotenv(dotenv_path=dotenv_path, override=True)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+DB_URL = os.getenv("DATABASE_URL")
 
 def get_gemini_client():
     if not GEMINI_API_KEY or "your_gemini_api_key" in GEMINI_API_KEY or GEMINI_API_KEY == "your-api-key-here":
@@ -113,6 +115,27 @@ Do NOT include any introductory or trailing text. Return ONLY the raw question.
         print(f"Failed LLM Abstention Call: {e}")
         return "A high correlation was found with server latency, but no support tickets exist. Was there a silent infrastructure outage in this region?"
 
+def get_confidence_weight_overrides():
+    """Retrieve dynamic track confidence weight overrides from Supabase config_overrides."""
+    conn = None
+    try:
+        conn = psycopg2.connect(DB_URL)
+        cursor = conn.cursor()
+        cursor.execute("SELECT pct_change_override, absolute_change_override FROM config_overrides WHERE kpi_name = 'confidence_weights';")
+        row = cursor.fetchone()
+        cursor.close()
+        if row:
+            return {
+                "Acute": row[0] if row[0] is not None else 0.90,
+                "Structural": row[1] if row[1] is not None else 0.70
+            }
+    except Exception as e:
+        print(f"Failed to fetch confidence overrides: {e}")
+    finally:
+        if conn:
+            conn.close()
+    return {"Acute": 0.90, "Structural": 0.70}
+
 def run_judging():
     print("Starting confidence judgment stage (Judge)...")
     try:
@@ -133,6 +156,7 @@ def run_judging():
     with open(anomalies_path, "r") as f:
         anomalies_list = json.load(f)
         
+    overrides = get_confidence_weight_overrides()
     judged_incidents = []
     
     for incident in incidents:
@@ -147,17 +171,23 @@ def run_judging():
         # 1. Evaluate candidate drivers
         drivers = incident["drivers"]
         corroborated_drivers = [d for d in drivers if d["evidence_gate_passed"]]
+        any_correlated = any(d["is_correlated"] for d in drivers)
         
         track = "Unconfirmed"
         score = 0.40
         primary_driver = {}
         
         if corroborated_drivers:
-            # ACUTE TRACK
+            # ACUTE TRACK (using dynamic database overrides if available)
             primary_driver = corroborated_drivers[0]
             corr = abs(primary_driver["correlation"])
             track = "Acute"
-            score = 0.90 if corr >= 0.7 else 0.70
+            score = overrides["Acute"] if corr >= 0.7 else max(0.50, overrides["Acute"] - 0.20)
+        elif not any_correlated:
+            # EXTERNAL TRACK (no internal driver correlates, likely market/competitor shift)
+            track = "External"
+            score = 0.60
+            primary_driver = {"candidate": "external_market_competitor", "correlation": 0.0, "is_correlated": False}
         else:
             # Check if this anomaly is part of a rolling STRUCTURAL decline (multiple alerts in 14 days)
             alerts_count = count_historical_alerts(anomaly, anomalies_list)
@@ -167,12 +197,12 @@ def run_judging():
             strongest_driver = sorted_drivers[0] if sorted_drivers else {}
             
             if alerts_count >= 3:
-                # STRUCTURAL TRACK (Score: 0.70, passes confidence floor 0.50)
+                # STRUCTURAL TRACK (using dynamic database overrides if available)
                 track = "Structural"
-                score = 0.70
+                score = overrides["Structural"]
                 primary_driver = strongest_driver
             else:
-                # UNCONFIRMED TRACK (Score: 0.40, falls below confidence floor 0.50)
+                # UNCONFIRMED TRACK
                 track = "Unconfirmed"
                 score = 0.40
                 primary_driver = strongest_driver
