@@ -1,0 +1,24 @@
+name: churn
+definition: Monthly rate of customer churn.
+calculation: "SELECT month_start_date, region, churn_rate, customer_count FROM churn_monthly"
+source_table: churn_monthly
+grain: monthly
+calendar: Monthly-Gregorian
+refresh_cadence: monthly
+known_drivers:
+  - support_tickets
+  - server_latency
+materiality_threshold:
+  pct_change: 0.15
+  absolute_change: 0.005
+lineage:
+  source_system: Salesforce CRM Export
+  owner: Business Operations Team
+access_restrictions:
+  CFO:
+    scope: company_wide
+    columns: ["month_start_date", "region", "churn_rate", "customer_count"]
+  Regional_Ops_Manager:
+    scope: regional
+    row_filter: "region = :user_region"
+    columns: ["month_start_date", "region", "churn_rate", "customer_count"]

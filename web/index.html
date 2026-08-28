@@ -1,0 +1,120 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BusinessIntelligence.ai</title>
+    
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <!-- Material Symbols Style Setup -->
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+    
+    <!-- Stitch Design System Tailwind Configuration -->
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "surface-dim": "#0c1324",
+              "tertiary-container": "#df7412",
+              "on-error-container": "#ffdad6",
+              "primary-fixed": "#d8e2ff",
+              "primary": "#adc6ff",
+              "surface": "#0c1324",
+              "error-container": "#93000a",
+              "tertiary": "#ffb786",
+              "background": "#0c1324",
+              "on-surface-variant": "#c2c6d6",
+              "on-secondary": "#003824",
+              "tertiary-fixed": "#ffdcc6",
+              "on-primary": "#002e6a",
+              "on-surface": "#dce1fb",
+              "secondary-fixed-dim": "#4edea3",
+              "surface-container-highest": "#2e3447",
+              "on-tertiary": "#502400",
+              "surface-tint": "#adc6ff",
+              "on-secondary-container": "#00311f",
+              "on-error": "#690005",
+              "on-tertiary-container": "#461f00",
+              "secondary-container": "#00a572",
+              "outline": "#8c909f",
+              "on-tertiary-fixed-variant": "#723600",
+              "secondary-fixed": "#6ffbbe",
+              "on-tertiary-fixed": "#311400",
+              "inverse-primary": "#005ac2",
+              "on-primary-container": "#00285d",
+              "on-secondary-fixed": "#002113",
+              "surface-variant": "#2e3447",
+              "on-primary-fixed": "#001a42",
+              "secondary": "#4edea3",
+              "error": "#ffb4ab",
+              "on-primary-fixed-variant": "#004395",
+              "inverse-on-surface": "#2a3043",
+              "surface-container-lowest": "#070d1f",
+              "surface-bright": "#33394c",
+              "on-secondary-fixed-variant": "#005236",
+              "primary-container": "#4d8eff",
+              "inverse-surface": "#dce1fb",
+              "surface-container-high": "#23293c",
+              "surface-container": "#191f31",
+              "surface-container-low": "#151b2d",
+              "primary-fixed-dim": "#adc6ff",
+              "tertiary-fixed-dim": "#ffb786",
+              "outline-variant": "#424754",
+              "on-background": "#dce1fb"
+            },
+            "borderRadius": {
+              "DEFAULT": "0.125rem",
+              "lg": "0.25rem",
+              "xl": "0.5rem",
+              "full": "0.75rem"
+            },
+            "spacing": {
+              "card-padding": "20px",
+              "gutter": "16px",
+              "stack-lg": "32px",
+              "unit": "4px",
+              "stack-sm": "8px",
+              "margin-page": "32px",
+              "stack-md": "16px"
+            },
+            "fontFamily": {
+              "headline-md": ["Inter"],
+              "body-lg": ["Inter"],
+              "mono-data": ["JetBrains Mono"],
+              "headline-lg": ["Inter"],
+              "label-caps": ["Inter"],
+              "body-sm": ["Inter"],
+              "display": ["Inter"]
+            },
+            "fontSize": {
+              "headline-md": ["18px", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+              "body-lg": ["16px", { "lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400" }],
+              "mono-data": ["13px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }],
+              "headline-lg": ["24px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+              "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+              "body-sm": ["14px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }],
+              "display": ["36px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }]
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-background text-on-background font-body-sm text-body-sm h-screen overflow-hidden antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

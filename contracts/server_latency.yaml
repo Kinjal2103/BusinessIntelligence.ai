@@ -1,0 +1,22 @@
+name: server_latency
+definition: Average hourly API server response latency in milliseconds.
+calculation: "SELECT timestamp, region, avg_latency_ms FROM server_latency_hourly"
+source_table: server_latency_hourly
+grain: hourly
+calendar: Gregorian
+refresh_cadence: hourly
+known_drivers: []
+materiality_threshold:
+  pct_change: 0.30
+  absolute_change: 100.00
+lineage:
+  source_system: Datadog Monitoring Stack
+  owner: Platform Operations SRE
+access_restrictions:
+  CFO:
+    scope: company_wide
+    columns: ["timestamp", "region", "avg_latency_ms"]
+  Regional_Ops_Manager:
+    scope: regional
+    row_filter: "region = :user_region"
+    columns: ["timestamp", "region", "avg_latency_ms"]

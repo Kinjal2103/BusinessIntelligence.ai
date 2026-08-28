@@ -1,0 +1,22 @@
+name: marketing_spend
+definition: Weekly marketing spend across ad campaigns.
+calculation: "SELECT week_start_date, region, campaign_name, spend FROM marketing_spend_weekly"
+source_table: marketing_spend_weekly
+grain: weekly
+calendar: Weekly-Monday
+refresh_cadence: weekly
+known_drivers: []
+materiality_threshold:
+  pct_change: 0.15
+  absolute_change: 1000.00
+lineage:
+  source_system: Ad Platform Export
+  owner: Marketing Team
+access_restrictions:
+  CFO:
+    scope: company_wide
+    columns: ["week_start_date", "region", "campaign_name", "spend"]
+  Regional_Ops_Manager:
+    scope: regional
+    row_filter: "region = :user_region"
+    columns: ["week_start_date", "region", "campaign_name", "spend"]

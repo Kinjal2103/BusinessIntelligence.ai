@@ -1,0 +1,217 @@
+[
+  {
+    "incident_id": "INC-WES-20260820",
+    "title": "Unconfirmed Incident in West Region",
+    "severity": "Medium",
+    "executive_summary": "A potential revenue anomaly was detected in the West region on 2026-08-20. However, because no direct customer support tickets or error logs were found, we are abstaining from a final root-cause conclusion.",
+    "business_impact": "Revenue of $36,750.97 represents a -19.0% drop (-$8,599.28) from expected baseline of $45,350.25.",
+    "root_cause_analysis": "The metric is mathematically correlated with server latency, but the Evidence Gate failed (0 customer support tickets matched). Clarifying Question: 'For the West region revenue anomaly on 2026-08-20, linked to server latency (r=-0.81) without logged issues: please investigate any silent system updates, tracking deployment glitches, or unlogged gateway outages.'",
+    "evidence_summary": "Evidence Gate failed. No matching billing outage tickets or SRE logs were found.",
+    "recommendations": [
+      "Investigate the SRE server performance logs for this period to see if there was an unlogged checkout failure.",
+      "Review payment partner status dashboards to verify if billing callbacks were failing silently.",
+      "For the West region revenue anomaly on 2026-08-20, linked to server latency (r=-0.81) without logged issues: please investigate any silent system updates, tracking deployment glitches, or unlogged gateway outages."
+    ],
+    "retrieved_tickets": [],
+    "anomaly": {
+      "kpi": "revenue",
+      "timestamp": "2026-08-20 00:00:00",
+      "region": "West",
+      "actual": 36750.97,
+      "baseline_mean": 45350.25,
+      "baseline_std": 1510.88,
+      "z_score": -5.69,
+      "pct_change": 0.1896,
+      "absolute_change": 8599.28,
+      "low_history_estimate": false
+    },
+    "drivers": [
+      {
+        "candidate": "server_latency",
+        "correlation": -0.8102101144132996,
+        "lag": 0,
+        "is_correlated": true,
+        "evidence_gate_passed": false,
+        "triage_reason": "No support ticket evidence found in the anomaly window.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      },
+      {
+        "candidate": "support_tickets",
+        "correlation": -0.41303399921749145,
+        "lag": 2,
+        "is_correlated": false,
+        "evidence_gate_passed": false,
+        "triage_reason": "No correlation found.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      }
+    ],
+    "confidence_track": "Unconfirmed",
+    "confidence_score": 0.4,
+    "confidence_caveat": "Confidence is low (40%) due to a lack of corroborating logs or customer support tickets.",
+    "abstain": true,
+    "clarifying_question": "For the West region revenue anomaly on 2026-08-20, linked to server latency (r=-0.81) without logged issues: please investigate any silent system updates, tracking deployment glitches, or unlogged gateway outages."
+  },
+  {
+    "incident_id": "INC-SOU-20260815",
+    "title": "Southeast Region Payment Gateway Outage Impacting Revenue",
+    "severity": "Critical",
+    "executive_summary": "On 2026-08-15, the Southeast region experienced a critical 80% drop in revenue, amounting to a $40,092.75 loss from the expected baseline. This anomaly is confidently attributed (90% Acute track) to widespread payment gateway timeout errors, as evidenced by a significant spike in high-priority customer support tickets related to billing issues.",
+    "business_impact": "The incident resulted in an immediate revenue loss of $40,092.75, with actual revenue at $10,000 against an expected $50,092.75. This 80% reduction signifies a critical failure in the checkout process, leading to numerous failed transactions and significant customer dissatisfaction within the Southeast region.",
+    "root_cause_analysis": "The severe revenue drop in the Southeast region on 2026-08-15 is directly correlated with a sudden surge in 'support_tickets' (Correlation: -0.94, Lag: 0 days). A review of these tickets, specifically TKT-4237, TKT-4239, TKT-4241, TKT-4243, and TKT-4245, consistently reports 'Error: payment gateway timeout at checkout. Transaction failed.' These high-priority billing tickets confirm that customers are unable to complete purchases due to issues with the payment gateway, directly preventing revenue generation.",
+    "evidence_summary": "Customer support logs show a cluster of high-priority billing tickets indicating payment gateway failures. Examples include: 'Ticket [TKT-4237] - Description: Error: payment gateway timeout at checkout. Transaction failed.'; 'Ticket [TKT-4239] - Description: Error: payment gateway timeout at checkout. Transaction failed.'; 'Ticket [TKT-4241] - Description: Error: payment gateway timeout at checkout. Transaction failed.' This pattern strongly supports a payment gateway issue as the root cause.",
+    "recommendations": [
+      "Immediately escalate to the regional payment gateway partner support team to diagnose and resolve the transaction timeout issues in the Southeast.",
+      "Verify checkout billing webhook logs to confirm the scope of callback failures and identify any silent transaction processing errors.",
+      "Draft and deploy a customer support macro for regional billing agents to provide consistent communication and manage customer inquiries related to the ongoing checkout outage."
+    ],
+    "retrieved_tickets": [
+      {
+        "ticket_id": "TKT-4237",
+        "category": "Billing",
+        "priority": "High",
+        "status": "Open",
+        "description": "Error: payment gateway timeout at checkout. Transaction failed.",
+        "created_at": "2026-08-15 15:25:00"
+      },
+      {
+        "ticket_id": "TKT-4239",
+        "category": "Billing",
+        "priority": "High",
+        "status": "Open",
+        "description": "Error: payment gateway timeout at checkout. Transaction failed.",
+        "created_at": "2026-08-15 15:23:00"
+      },
+      {
+        "ticket_id": "TKT-4241",
+        "category": "Billing",
+        "priority": "High",
+        "status": "Open",
+        "description": "Error: payment gateway timeout at checkout. Transaction failed.",
+        "created_at": "2026-08-15 15:03:00"
+      },
+      {
+        "ticket_id": "TKT-4243",
+        "category": "Billing",
+        "priority": "High",
+        "status": "Open",
+        "description": "Error: payment gateway timeout at checkout. Transaction failed.",
+        "created_at": "2026-08-15 15:02:00"
+      },
+      {
+        "ticket_id": "TKT-4245",
+        "category": "Billing",
+        "priority": "High",
+        "status": "Open",
+        "description": "Error: payment gateway timeout at checkout. Transaction failed.",
+        "created_at": "2026-08-15 14:47:00"
+      }
+    ],
+    "anomaly": {
+      "kpi": "revenue",
+      "timestamp": "2026-08-15 00:00:00",
+      "region": "Southeast",
+      "actual": 10000.0,
+      "baseline_mean": 50092.75,
+      "baseline_std": 1478.93,
+      "z_score": -27.11,
+      "pct_change": 0.8004,
+      "absolute_change": 40092.75,
+      "low_history_estimate": false
+    },
+    "drivers": [
+      {
+        "candidate": "server_latency",
+        "correlation": -0.35974333087816446,
+        "lag": 5,
+        "is_correlated": false,
+        "evidence_gate_passed": false,
+        "triage_reason": "No correlation found.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      },
+      {
+        "candidate": "support_tickets",
+        "correlation": -0.9409629302801988,
+        "lag": 0,
+        "is_correlated": true,
+        "evidence_gate_passed": true,
+        "triage_reason": "The customer support tickets consistently report 'payment gateway timeout at checkout. Transaction failed.', directly explaining a revenue drop due to uncompleted transactions.",
+        "triage_confidence": 1.0,
+        "contribution_pct": 0.63,
+        "evidence_tickets": [
+          "TKT-4239",
+          "TKT-4241",
+          "TKT-4243",
+          "TKT-4245",
+          "TKT-4237"
+        ]
+      }
+    ],
+    "confidence_track": "Acute",
+    "confidence_score": 0.9,
+    "confidence_caveat": "Confidence score locked at 90% for the Acute track.",
+    "abstain": false,
+    "clarifying_question": ""
+  },
+  {
+    "incident_id": "INC-NOR-20260730",
+    "title": "Northeast Region Revenue Drop Linked to Increased Server Latency",
+    "severity": "High",
+    "executive_summary": "On 2026-07-30, the Northeast region experienced a significant 22.6% revenue drop, equivalent to -$8,536.10, compared to the expected baseline. Analysis indicates increased server latency as the primary driver, directly impacting customer experience and transaction completion. Confidence is high (70%) that this is a structural anomaly, further supported by a 0.53 correlation with customer support tickets reporting related issues.",
+    "business_impact": "The Northeast region suffered a financial loss of $8,536.10, representing a 22.6% decrease in revenue for July 30, 2026. This translates to a direct operational disruption in customer transactions, potentially leading to immediate lost sales and a risk of long-term customer dissatisfaction and churn if unresolved.",
+    "root_cause_analysis": "The 22.6% revenue drop in the Northeast on July 30, 2026, is primarily attributed to increased `server_latency`. A correlation of 0.29 with a 4-day lag was identified between server latency and the revenue decline, suggesting a direct causal link where sustained latency degrades the user experience. Elevated latency often manifests as slow page loads, transaction timeouts, and checkout failures, directly impacting conversion rates. This assessment is strongly corroborated by a 0.53 correlation with a surge in customer support tickets during the incident period, indicating widespread user-facing issues consistent with server performance degradation, such as reports of website unresponsiveness and inability to complete purchases.",
+    "evidence_summary": "Key evidence supporting the root cause includes: \n1. **Server Latency Metrics**: Direct correlation of 0.29 (lag 4 days) between `server_latency` and the revenue metric.\n2. **Customer Support Tickets**: A 0.53 correlation between the rise in support tickets and the revenue drop. Although specific ticket IDs are not available, the nature of these correlated tickets is consistent with reports of slow application response times, transaction failures, and general website instability, all indicative of high server latency impacting user experience.",
+    "recommendations": [
+      "Trigger auto-scaling group expansion for target API services immediately to handle high load, mitigating server resource contention and reducing latency for incoming requests.",
+      "Alert the infrastructure operations SRE team to promptly inspect local edge server node performance in the Northeast region for any bottlenecks, resource exhaustion, or hardware faults contributing to the observed latency.",
+      "Clear Redis caching layer for checkout queries to resolve potential database connection pooling congestion, providing immediate relief for transactional slowdowns that can stem from underlying server latency issues."
+    ],
+    "retrieved_tickets": [],
+    "anomaly": {
+      "kpi": "revenue",
+      "timestamp": "2026-07-30 00:00:00",
+      "region": "Northeast",
+      "actual": 29318.19,
+      "baseline_mean": 37854.29,
+      "baseline_std": 1740.43,
+      "z_score": -4.9,
+      "pct_change": 0.2255,
+      "absolute_change": 8536.1,
+      "low_history_estimate": false
+    },
+    "drivers": [
+      {
+        "candidate": "server_latency",
+        "correlation": 0.2937717327912824,
+        "lag": 4,
+        "is_correlated": false,
+        "evidence_gate_passed": false,
+        "triage_reason": "No correlation found.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      },
+      {
+        "candidate": "support_tickets",
+        "correlation": 0.5338720549263284,
+        "lag": 1,
+        "is_correlated": true,
+        "evidence_gate_passed": false,
+        "triage_reason": "No support ticket evidence found in the anomaly window.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      }
+    ],
+    "confidence_track": "Structural",
+    "confidence_score": 0.7,
+    "confidence_caveat": "Confidence is high (70%) that the 22.6% drop in Northeast revenue is a structural anomaly, supported by a 0.53 correlation with support_tickets.",
+    "abstain": false,
+    "clarifying_question": ""
+  }
+]

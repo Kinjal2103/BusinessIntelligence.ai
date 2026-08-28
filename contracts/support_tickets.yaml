@@ -1,0 +1,23 @@
+name: support_tickets
+definition: Volume of customer support tickets submitted.
+calculation: "SELECT ticket_id, customer_id, region, created_at, category, priority, status, description FROM support_tickets"
+source_table: support_tickets
+grain: event
+calendar: Gregorian
+refresh_cadence: real-time
+known_drivers:
+  - server_latency
+materiality_threshold:
+  pct_change: 0.25
+  absolute_change: 15
+lineage:
+  source_system: Zendesk
+  owner: Customer Success Team
+access_restrictions:
+  CFO:
+    scope: company_wide
+    columns: ["ticket_id", "region", "created_at", "category", "priority", "status"] # PII Excluded (no description or customer_id)
+  Regional_Ops_Manager:
+    scope: regional
+    row_filter: "region = :user_region"
+    columns: ["ticket_id", "region", "created_at", "category", "priority", "status", "description"] # Ops needs descriptions but not customer PII

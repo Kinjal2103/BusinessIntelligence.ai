@@ -1,0 +1,95 @@
+/* Obsidian Data Logic - Technical Style Overlays */
+
+body {
+  background-color: #020617 !important; /* Level 0 Canvas */
+}
+
+/* Custom grid background pattern */
+.grid-bg {
+  background-size: 24px 24px;
+  background-image: linear-gradient(to right, #1e293b 1px, transparent 1px),
+                    linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+  opacity: 0.12;
+}
+
+/* Custom styling for data cards to match elevation specs */
+.data-card {
+  background-color: #0f172a; /* Level 1 Surface */
+  border: 1px solid #1e293b;
+  border-radius: 4px; /* rounded-sm */
+  box-shadow: none; /* Eschew shadows in favor of outlines */
+}
+
+.data-card-interactive:hover {
+  border-color: #3b82f6;
+  transition: border-color 0.2s ease;
+}
+
+/* Level 2 Surfaces (Modals/Popovers) */
+.level-2-surface {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Checkboxes rounded-sm custom technical inputs */
+.input-technical {
+  background-color: #020617 !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 4px !important;
+  color: #dce1fb !important;
+}
+
+.input-technical:focus {
+  border-color: #3b82f6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px #3b82f6 !important;
+}
+
+/* Adjust standard text alignment to support Inter styling definitions */
+.font-display {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.font-headline-lg {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.font-headline-md {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.font-label-caps {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.font-mono-data {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+}

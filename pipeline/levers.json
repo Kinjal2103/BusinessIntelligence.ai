@@ -1,0 +1,27 @@
+{
+  "support_tickets": [
+    "Escalate immediately to the regional payment gateway partner support team to address transaction timeout issues.",
+    "Verify checkout billing webhook logs to confirm whether callbacks are failing silently.",
+    "Draft a customer support macro for regional billing agents to handle customer queries during the checkout outage."
+  ],
+  "server_latency": [
+    "Trigger auto-scaling group expansion for target API services to handle high load.",
+    "Clear Redis caching layer for checkout queries to resolve potential database connection pooling congestion.",
+    "Alert the infrastructure operations SRE team to inspect local edge server node performance."
+  ],
+  "churn": [
+    "Launch target win-back email promotion with a 15% discount code targeting high-risk cohorts.",
+    "Alert the account relationship management team to perform high-priority outreach to top regional clients.",
+    "Conduct a post-mortem review of customer success logs to identify friction in service renewals."
+  ],
+  "marketing_spend": [
+    "Pause low-ROI marketing campaigns in the target region to prevent budget waste.",
+    "Reallocate spend towards proven search-ad campaigns to offset organic traffic drops.",
+    "Audit campaign tracking URLs to ensure click attribution data is flowing correctly to the CRM."
+  ],
+  "revenue": [
+    "Audit checkout funnel conversion metrics to identify localized transaction friction.",
+    "Prepare a financial impact briefing for the executive leadership team detailing regional performance.",
+    "Cross-reference regional revenue drop with billing partner status pages."
+  ]
+}

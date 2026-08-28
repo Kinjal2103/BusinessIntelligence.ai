@@ -1,0 +1,140 @@
+[
+  {
+    "anomaly": {
+      "kpi": "revenue",
+      "timestamp": "2026-08-20 00:00:00",
+      "region": "West",
+      "actual": 36750.97,
+      "baseline_mean": 45350.25,
+      "baseline_std": 1510.88,
+      "z_score": -5.69,
+      "pct_change": 0.1896,
+      "absolute_change": 8599.28,
+      "low_history_estimate": false
+    },
+    "drivers": [
+      {
+        "candidate": "server_latency",
+        "correlation": -0.8102101144132996,
+        "lag": 0,
+        "is_correlated": true,
+        "evidence_gate_passed": false,
+        "triage_reason": "No support ticket evidence found in the anomaly window.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      },
+      {
+        "candidate": "support_tickets",
+        "correlation": -0.41303399921749145,
+        "lag": 2,
+        "is_correlated": false,
+        "evidence_gate_passed": false,
+        "triage_reason": "No correlation found.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      }
+    ],
+    "confidence_track": "Unconfirmed",
+    "confidence_score": 0.4,
+    "confidence_caveat": "Confidence is low (40%) due to a lack of corroborating logs or customer support tickets.",
+    "abstain": true,
+    "clarifying_question": "For the West region revenue anomaly on 2026-08-20, linked to server latency (r=-0.81) without logged issues: please investigate any silent system updates, tracking deployment glitches, or unlogged gateway outages.",
+    "timestamp": "2026-08-28 23:30:55"
+  },
+  {
+    "anomaly": {
+      "kpi": "revenue",
+      "timestamp": "2026-08-15 00:00:00",
+      "region": "Southeast",
+      "actual": 10000.0,
+      "baseline_mean": 50092.75,
+      "baseline_std": 1478.93,
+      "z_score": -27.11,
+      "pct_change": 0.8004,
+      "absolute_change": 40092.75,
+      "low_history_estimate": false
+    },
+    "drivers": [
+      {
+        "candidate": "server_latency",
+        "correlation": -0.35974333087816446,
+        "lag": 5,
+        "is_correlated": false,
+        "evidence_gate_passed": false,
+        "triage_reason": "No correlation found.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      },
+      {
+        "candidate": "support_tickets",
+        "correlation": -0.9409629302801988,
+        "lag": 0,
+        "is_correlated": true,
+        "evidence_gate_passed": true,
+        "triage_reason": "The customer support tickets consistently report 'payment gateway timeout at checkout. Transaction failed.', directly explaining a revenue drop due to uncompleted transactions.",
+        "triage_confidence": 1.0,
+        "contribution_pct": 0.63,
+        "evidence_tickets": [
+          "TKT-4239",
+          "TKT-4241",
+          "TKT-4243",
+          "TKT-4245",
+          "TKT-4237"
+        ]
+      }
+    ],
+    "confidence_track": "Acute",
+    "confidence_score": 0.9,
+    "confidence_caveat": "Confidence score locked at 90% for the Acute track.",
+    "abstain": false,
+    "clarifying_question": "",
+    "timestamp": "2026-08-28 23:30:57"
+  },
+  {
+    "anomaly": {
+      "kpi": "revenue",
+      "timestamp": "2026-07-30 00:00:00",
+      "region": "Northeast",
+      "actual": 29318.19,
+      "baseline_mean": 37854.29,
+      "baseline_std": 1740.43,
+      "z_score": -4.9,
+      "pct_change": 0.2255,
+      "absolute_change": 8536.1,
+      "low_history_estimate": false
+    },
+    "drivers": [
+      {
+        "candidate": "server_latency",
+        "correlation": 0.2937717327912824,
+        "lag": 4,
+        "is_correlated": false,
+        "evidence_gate_passed": false,
+        "triage_reason": "No correlation found.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      },
+      {
+        "candidate": "support_tickets",
+        "correlation": 0.5338720549263284,
+        "lag": 1,
+        "is_correlated": true,
+        "evidence_gate_passed": false,
+        "triage_reason": "No support ticket evidence found in the anomaly window.",
+        "triage_confidence": 0.0,
+        "contribution_pct": 0.0,
+        "evidence_tickets": []
+      }
+    ],
+    "confidence_track": "Structural",
+    "confidence_score": 0.7,
+    "confidence_caveat": "Confidence is high (70%) that the 22.6% drop in Northeast revenue is a structural anomaly, supported by a 0.53 correlation with support_tickets.",
+    "abstain": false,
+    "clarifying_question": "",
+    "timestamp": "2026-08-28 23:31:07"
+  }
+]
