@@ -54,7 +54,7 @@
         "evidence_tickets": []
       }
     ],
-    "timestamp": "2026-08-29 00:22:15"
+    "timestamp": "2026-08-29 18:05:45"
   },
   {
     "anomaly": {
@@ -96,7 +96,7 @@
         "lag": 0,
         "is_correlated": true,
         "evidence_gate_passed": true,
-        "triage_reason": "The support tickets directly report multiple instances of payment gateway timeouts and failed transactions at checkout on 2026-08-15, providing direct evidence for a revenue drop due to uncompleted purchases.",
+        "triage_reason": "The support tickets directly report multiple 'payment gateway timeout at checkout' errors on the anomaly date, which would cause transactions to fail and subsequently lead to a revenue drop.",
         "triage_confidence": 0.98,
         "contribution_pct": 0.95,
         "price_volume_mix": {
@@ -121,7 +121,7 @@
         ]
       }
     ],
-    "timestamp": "2026-08-29 00:22:24"
+    "timestamp": "2026-08-29 18:05:55"
   },
   {
     "anomaly": {
@@ -178,6 +178,6 @@
         "evidence_tickets": []
       }
     ],
-    "timestamp": "2026-08-29 00:22:26"
+    "timestamp": "2026-08-29 18:05:58"
   }
 ]

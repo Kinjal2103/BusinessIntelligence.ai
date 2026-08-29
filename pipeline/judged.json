@@ -58,8 +58,8 @@
     "confidence_score": 0.4,
     "confidence_caveat": "Confidence is low (40%) due to a lack of corroborating logs or customer support tickets.",
     "abstain": true,
-    "clarifying_question": "Revenue in the West region on 2026-08-20 showed a significant inverse correlation with server latency (r=-0.81), despite no corresponding error logs or support tickets. Could this indicate an unlogged system update, a tracking deployment glitch, or a silent gateway outage during that period?",
-    "timestamp": "2026-08-29 00:22:38"
+    "clarifying_question": "Given the revenue anomaly in the West region on 2026-08-20, mathematically correlated with server_latency (r = -0.81) but lacking corresponding error logs or support tickets, could this have been due to a silent system update, a tracking deployment glitch, or an unlogged gateway outage?",
+    "timestamp": "2026-08-29 18:06:11"
   },
   {
     "anomaly": {
@@ -101,7 +101,7 @@
         "lag": 0,
         "is_correlated": true,
         "evidence_gate_passed": true,
-        "triage_reason": "The support tickets directly report multiple instances of payment gateway timeouts and failed transactions at checkout on 2026-08-15, providing direct evidence for a revenue drop due to uncompleted purchases.",
+        "triage_reason": "The support tickets directly report multiple 'payment gateway timeout at checkout' errors on the anomaly date, which would cause transactions to fail and subsequently lead to a revenue drop.",
         "triage_confidence": 0.98,
         "contribution_pct": 0.95,
         "price_volume_mix": {
@@ -128,10 +128,10 @@
     ],
     "confidence_track": "Acute",
     "confidence_score": 0.9,
-    "confidence_caveat": "Confidence is acute (90%) that the 80.0% drop in Southeast revenue is primarily driven by an increase in `support_tickets` given their strong negative correlation (-0.94).",
+    "confidence_caveat": "Confidence is Acute (0.90) that the 80% revenue drop in the Southeast region represents a genuine anomaly, strongly correlated with support tickets (correlation: -0.94).",
     "abstain": false,
     "clarifying_question": "",
-    "timestamp": "2026-08-29 00:22:44"
+    "timestamp": "2026-08-29 18:06:19"
   },
   {
     "anomaly": {
@@ -190,9 +190,9 @@
     ],
     "confidence_track": "Structural",
     "confidence_score": 0.7,
-    "confidence_caveat": "Confidence is high (70%) that this represents a structural 22.6% revenue drop in the Northeast, supported by a 0.53 correlation with support ticket activity.",
+    "confidence_caveat": "Confidence is high (70%) that the 22.6% revenue drop in the Northeast is structural, as it correlates moderately (0.53) with support_tickets.",
     "abstain": false,
     "clarifying_question": "",
-    "timestamp": "2026-08-29 00:23:00"
+    "timestamp": "2026-08-29 18:06:28"
   }
 ]
