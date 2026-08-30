@@ -42,13 +42,27 @@ def health_check():
 @app.get("/api/reports")
 def get_reports(
     x_user_role: str = Header(None, alias="X-User-Role"),
-    x_user_region: str = Header(None, alias="X-User-Region")
+    x_user_region: str = Header(None, alias="X-User-Region"),
+    active_only: bool = False
 ):
     """Retrieve synthesized executive triage reports, applying server-side RBAC entitlements."""
     if not os.path.exists(REPORTS_PATH):
         return []
         
     try:
+        # Fetch decided incidents to filter out of the active feed if active_only is set
+        decided_ids = set()
+        if active_only:
+            try:
+                conn = get_connection()
+                cursor = conn.cursor()
+                cursor.execute("SELECT DISTINCT incident_id FROM feedback_logs;")
+                decided_ids = {row[0] for row in cursor.fetchall()}
+                cursor.close()
+                conn.close()
+            except Exception as db_err:
+                print(f"[Warning] Failed to fetch decided incident IDs: {db_err}")
+
         with open(REPORTS_PATH, "r") as f:
             reports = json.load(f)
             
@@ -58,6 +72,9 @@ def get_reports(
         filtered_reports = []
         
         for r in reports:
+            # Skip already triaged/decided incidents if active_only is requested
+            if active_only and r["incident_id"] in decided_ids:
+                continue
             region = r["anomaly"]["region"]
             report_copy = dict(r)
             

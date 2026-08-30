@@ -947,7 +947,7 @@ function App() {
       headers["X-User-Region"] = regionFilter
     }
 
-    fetch(`${API_BASE}/api/reports`, { headers })
+    fetch(`${API_BASE}/api/reports?active_only=true`, { headers })
       .then(res => {
         if (!res.ok) throw new Error("API not active")
         return res.json()

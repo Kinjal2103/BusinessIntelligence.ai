@@ -1,6 +1,8 @@
 import os
 import psycopg2
 import pandas as pd
+import warnings
+warnings.filterwarnings("ignore", message=".*SQLAlchemy connectable.*")
 from dotenv import load_dotenv
 from pipeline.contract_loader import registry
 

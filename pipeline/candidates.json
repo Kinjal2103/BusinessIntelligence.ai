@@ -54,7 +54,7 @@
         "evidence_tickets": []
       }
     ],
-    "timestamp": "2026-08-29 18:05:45"
+    "timestamp": "2026-08-30 01:46:36"
   },
   {
     "anomaly": {
@@ -96,8 +96,8 @@
         "lag": 0,
         "is_correlated": true,
         "evidence_gate_passed": true,
-        "triage_reason": "The support tickets directly report multiple 'payment gateway timeout at checkout' errors on the anomaly date, which would cause transactions to fail and subsequently lead to a revenue drop.",
-        "triage_confidence": 0.98,
+        "triage_reason": "The support tickets directly report multiple instances of 'payment gateway timeout at checkout' and 'Transaction failed' on the anomaly date, providing concrete evidence for the revenue drop due to billing issues.",
+        "triage_confidence": 1.0,
         "contribution_pct": 0.95,
         "price_volume_mix": {
           "volume_contribution_pct": 95.0,
@@ -113,15 +113,15 @@
           "control_post_avg": 15180.97
         },
         "evidence_tickets": [
-          "TKT-4237",
           "TKT-4239",
           "TKT-4241",
           "TKT-4243",
-          "TKT-4265"
+          "TKT-4245",
+          "TKT-4237"
         ]
       }
     ],
-    "timestamp": "2026-08-29 18:05:55"
+    "timestamp": "2026-08-30 01:46:47"
   },
   {
     "anomaly": {
@@ -178,6 +178,6 @@
         "evidence_tickets": []
       }
     ],
-    "timestamp": "2026-08-29 18:05:58"
+    "timestamp": "2026-08-30 01:46:49"
   }
 ]

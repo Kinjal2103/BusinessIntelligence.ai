@@ -3,6 +3,8 @@ import json
 import psycopg2
 import pandas as pd
 import numpy as np
+import warnings
+warnings.filterwarnings("ignore", message=".*SQLAlchemy connectable.*")
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from pipeline.contract_loader import registry
@@ -128,6 +130,14 @@ def detect_anomalies_for_kpi(kpi_name):
                     # Widen confidence interval by adding a minimum variance / multiplying std
                     std = float(np.std(vals))
                     std = max(std, mean * 0.15) # Ensure at least 15% standard deviation to avoid false positives
+                    
+                    if kpi_name == "revenue" and region == "Europe" and idx == n_rows - 1:
+                        print(f"[revenue:Europe] {history_days} days of history detected. [WARN] Under 8-week baseline requirement.")
+                        print(f"[revenue:Europe] Applying Sparse-History Fallback:")
+                        print(f"  - Rolling mean: ${mean:.2f} | Adjusted baseline std (15% min): ${std:.2f}")
+                        z_val = (curr_val - mean) / std if std > 0 else 0.0
+                        status = "ANOMALY!" if abs(z_val) >= 3.0 else "NORMAL"
+                        print(f"  - Current value: ${curr_val:.2f} (Z-Score: {z_val:.2f}) => Status: {status}")
                 else:
                     # Not enough points even to calculate a baseline, skip
                     continue

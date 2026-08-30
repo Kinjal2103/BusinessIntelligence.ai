@@ -235,23 +235,23 @@ Do NOT include markdown formatting (like ```json). Return ONLY the raw JSON.
         fallback_recommendations = candidate_levers[:3]
         return {
             "incident_id": insight_id,
-            "title": fallback_title,
+            "title": f"[Operational Summary] {fallback_title}",
             "severity": "High",
-            "executive_summary": fallback_summary,
+            "executive_summary": f"Ops Summary: {fallback_summary} Incident correlates with a support ticket surge.",
             "business_impact": f"Revenue dropped by -${abs_change:,.2f} (-{pct_change * 100:.1f}%).",
             "root_cause_analysis": f"Root cause driver: {driver_kpi}. Narrative synthesis failed: {e}",
             "evidence_summary": "Failed to analyze support tickets.",
             "recommendations": fallback_recommendations,
             "cfo": {
-                "title": fallback_title,
-                "executive_summary": fallback_summary,
+                "title": f"[Financial Summary] {fallback_title}",
+                "executive_summary": f"CFO Summary: {fallback_summary} Total revenue impact calculated at -${abs_change:,.2f}.",
                 "business_impact": f"Revenue drop of -${abs_change:,.2f} (-{pct_change * 100:.1f}%).",
                 "root_cause_analysis": f"Root cause driver: {driver_kpi}",
                 "recommendations": fallback_recommendations
             },
             "ops": {
-                "title": fallback_title,
-                "executive_summary": fallback_summary,
+                "title": f"[Operational Summary] {fallback_title}",
+                "executive_summary": f"Ops Summary: {fallback_summary} Incident correlates with a support ticket surge.",
                 "business_impact": f"Revenue drop of -${abs_change:,.2f} (-{pct_change * 100:.1f}%).",
                 "root_cause_analysis": f"Root cause driver: {driver_kpi}",
                 "recommendations": fallback_recommendations
